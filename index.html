@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Step Sequencer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-wrapper">
+      <div class="control-panel">
+        <div class="play-btn btn">Play</div>
+        <div class="slow-btn btn"><<</div>
+        <div class="fast-btn btn">>></div>
+      </div>
+      <div class="step-row">
+        <div class="track-name">Kick</div>
+        <div class="step step1" data-key="kick"></div>
+        <div class="step step2" data-key="kick"></div>
+        <div class="step step3" data-key="kick"></div>
+        <div class="step step4" data-key="kick"></div>
+        <div class="step step5" data-key="kick"></div>
+        <div class="step step6" data-key="kick"></div>
+        <div class="step step7" data-key="kick"></div>
+        <div class="step step8" data-key="kick"></div>
+      </div>
+      <div class="step-row">
+        <div class="track-name">Hihat</div>
+        <div class="step step1" data-key="hihat"></div>
+        <div class="step step2" data-key="hihat"></div>
+        <div class="step step3" data-key="hihat"></div>
+        <div class="step step4" data-key="hihat"></div>
+        <div class="step step5" data-key="hihat"></div>
+        <div class="step step6" data-key="hihat"></div>
+        <div class="step step7" data-key="hihat"></div>
+        <div class="step step8" data-key="hihat"></div>
+      </div>
+      <div class="step-row">
+        <div class="track-name">Clap</div>
+        <div class="step step1" data-key="clap"></div>
+        <div class="step step2" data-key="clap"></div>
+        <div class="step step3" data-key="clap"></div>
+        <div class="step step4" data-key="clap"></div>
+        <div class="step step5" data-key="clap"></div>
+        <div class="step step6" data-key="clap"></div>
+        <div class="step step7" data-key="clap"></div>
+        <div class="step step8" data-key="clap"></div>
+      </div>
+      <div class="step-row">
+        <div class="track-name">Snare</div>
+        <div class="step step1" data-key="snare"></div>
+        <div class="step step2" data-key="snare"></div>
+        <div class="step step3" data-key="snare"></div>
+        <div class="step step4" data-key="snare"></div>
+        <div class="step step5" data-key="snare"></div>
+        <div class="step step6" data-key="snare"></div>
+        <div class="step step7" data-key="snare"></div>
+        <div class="step step8" data-key="snare"></div>
+      </div>
+    </div>
+    <audio src="./kick.wav" id="kick-audio"/>
+    <audio src="./hihat.wav" id="hihat-audio"/>
+    <audio src="./clap.wav" id="clap-audio"/>
+    <audio src="./snare.wav" id="snare-audio"/>
+    <script>
+      const sounds = {
+        kick: document.getElementById('kick-audio'),
+        hihat: document.getElementById('hihat-audio'),
+        clap: document.getElementById('clap-audio'),
+        snare: document.getElementById('snare-audio'),
+      };
+      let steps = document.querySelectorAll('.step');
+
+      // adding css of toggling step on or off
+      steps.forEach(step => {
+        step.addEventListener('click', e => {
+          e.target.classList.toggle('active');
+        });
+      });
+
+      let step1 = document.getElementsByClassName('step1 active');
+      let step2 = document.getElementsByClassName('step2 active');
+      let step3 = document.getElementsByClassName('step3 active');
+      let step4 = document.getElementsByClassName('step4 active');
+      let step5 = document.getElementsByClassName('step5 active');
+      let step6 = document.getElementsByClassName('step6 active');
+      let step7 = document.getElementsByClassName('step7 active');
+      let step8 = document.getElementsByClassName('step8 active');
+
+      let currentStep = 1;
+      let playing = false;
+      let intervalId = null;
+
+      const playTracks = e => {
+        if (playing) {
+          window.clearInterval(intervalId)
+          playing = false;
+          e.target.innerText = 'Play';
+        } else {
+          playing = true;
+          e.target.innerText = 'Pause'
+          intervalId = setInterval(() => {
+            let stepsToBePlayed = null;
+            if (currentStep < 5) {
+              if (currentStep < 3) {
+                stepsToBePlayed = currentStep === 2 ? step2 : step1;
+              } else {
+                stepsToBePlayed = currentStep === 3 ? step3 : step4;
+              }
+            } else {
+              if (currentStep < 7) {
+                stepsToBePlayed = currentStep === 6 ? step6 : step5;
+              } else {
+                stepsToBePlayed = currentStep === 7 ? step7 : step8;
+              }
+            }
+            currentStep++;
+            if (currentStep === 9) currentStep = 1;
+            for (let i = 0; i < stepsToBePlayed.length; i++) {
+              let sound = sounds[stepsToBePlayed[i].dataset.key];
+              sound.currentTime = 0;
+              sound.play();
+            }
+          }, 140)
+        }
+      };
+
+      document.getElementsByClassName('play-btn')[0].addEventListener('click', playTracks)
+    </script>
+</body>
+</html>
